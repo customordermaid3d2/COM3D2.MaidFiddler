@@ -35,11 +35,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\Libs\Assembly-CSharp.dll</HintPath>
+      <HintPath>F:\COM3D2\COM3D2x64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ExIni">
-      <HintPath>..\Libs\ExIni.dll</HintPath>
+      <HintPath>E:\com3d2\_plugin\cm3d2_j_154\Sybaris\ExIni.dll</HintPath>
     </Reference>
     <Reference Include="MsgPack">
       <HintPath>..\Libs\MsgPack.dll</HintPath>
@@ -47,11 +47,11 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
-      <HintPath>..\Libs\UnityEngine.dll</HintPath>
+      <HintPath>F:\COM3D2\COM3D2x64_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityInjector">
-      <HintPath>..\Libs\UnityInjector.dll</HintPath>
+      <HintPath>E:\com3d2\_plugin\cm3d2_j_154\Sybaris\UnityInjector.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
