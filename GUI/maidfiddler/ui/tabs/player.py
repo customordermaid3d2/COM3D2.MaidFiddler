@@ -105,6 +105,7 @@ class PlayerTab(UiTab):
         locked_vals = set(data["locked_props"])
 
         for prop, value in data["props"].items():
+            logger.debug(f"data.items: {prop} , {value}")
             (el, cb) = self.properties[prop]
             el.set_value(value)
 

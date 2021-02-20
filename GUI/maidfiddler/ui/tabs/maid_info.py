@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QGroupBox, QLabel, QCheckBox
 from .ui_tab import UiTab
 from maidfiddler.ui.qt_elements import TextElement, ComboElement, NumberElement, PlainTextElement, CheckboxElement
 from maidfiddler.util.translation import tr, tr_str
-
+from maidfiddler.util.logger import logger
 
 class MaidInfoTab(UiTab):
     maid_prop_changed_signal = pyqtSignal(dict)
@@ -15,7 +15,7 @@ class MaidInfoTab(UiTab):
         self.relations_names = []
         self.feeling_names = []
         self.additional_relations_names = []
-        self.SpecialRelation_names = []
+        self.special_relation_names = []
         self.seikeiken_names = []
         self.job_classes_names = []
         self.yotogi_classes_names = []
@@ -28,7 +28,7 @@ class MaidInfoTab(UiTab):
             "relation": ComboElement(self.ui.relation_combo),
             "feeling": ComboElement(self.ui.feeling_combo),
             "additionalRelation": ComboElement(self.ui.additional_relation_combo),
-            "SpecialRelation": ComboElement(self.ui.SpecialRelation_combo),
+            "specialRelation": ComboElement(self.ui.special_relation_combo),
             "seikeiken": ComboElement(self.ui.current_combo),
             "initSeikeiken": ComboElement(self.ui.initial_combo),
             "current_job_class_id": ComboElement(self.ui.job_class_combo),
@@ -51,7 +51,7 @@ class MaidInfoTab(UiTab):
         relations = self.properties["relation"].index_map()
         feelings = self.properties["feeling"].index_map()
         additional_relations = self.properties["additionalRelation"].index_map()
-        SpecialRelation = self.properties["SpecialRelation"].index_map()
+        special_relation = self.properties["specialRelation"].index_map()
         cur_seikeiken = self.properties["seikeiken"].index_map()
         init_seikeiken = self.properties["initSeikeiken"].index_map()
         job_classes = self.properties["current_job_class_id"].index_map()
@@ -62,7 +62,7 @@ class MaidInfoTab(UiTab):
         relations.clear()
         feelings.clear()
         additional_relations.clear()
-        SpecialRelation.clear()
+        special_relation.clear()
         cur_seikeiken.clear()
         init_seikeiken.clear()
         job_classes.clear()
@@ -73,7 +73,7 @@ class MaidInfoTab(UiTab):
         self.relations_names.clear()
         self.feeling_names.clear()
         self.additional_relations_names.clear()
-        self.SpecialRelation_names.clear()
+        self.special_relation_names.clear()
         self.seikeiken_names.clear()
         self.job_classes_names.clear()
         self.yotogi_classes_names.clear()
@@ -83,7 +83,7 @@ class MaidInfoTab(UiTab):
         self.ui.relation_combo.blockSignals(True)
         self.ui.feeling_combo.blockSignals(True)
         self.ui.additional_relation_combo.blockSignals(True)
-        self.ui.SpecialRelation_combo.blockSignals(True)
+        self.ui.special_relation_combo.blockSignals(True)
         self.ui.current_combo.blockSignals(True)
         self.ui.initial_combo.blockSignals(True)
         self.ui.job_class_combo.blockSignals(True)
@@ -93,7 +93,7 @@ class MaidInfoTab(UiTab):
         self.ui.contract_combo.clear()
         self.ui.relation_combo.clear()
         self.ui.additional_relation_combo.clear()
-        self.ui.SpecialRelation_combo.clear()
+        self.ui.special_relation_combo.clear()
         self.ui.current_combo.clear()
         self.ui.initial_combo.clear()
         self.ui.job_class_combo.clear()
@@ -128,11 +128,13 @@ class MaidInfoTab(UiTab):
             additional_relations[relation_id] = i
             self.additional_relations_names.append(f"additional_relations.{relation_name}")
 
-        for i, relation_name in enumerate(self._game_data["SpecialRelation"]):
-            relation_id = self._game_data["SpecialRelation"][relation_name]
-            self.ui.SpecialRelation_combo.addItem(relation_name, relation_id)
-            SpecialRelation[relation_id] = i
-            self.SpecialRelation_names.append(f"SpecialRelation.{relation_name}")
+        for i, relation_name in enumerate(self._game_data["special_relation"]):
+            logger.info("relation_name:"+relation_name)
+            relation_id = self._game_data["special_relation"][relation_name]
+            logger.info("relation_id:"+str(relation_id))
+            self.ui.special_relation_combo.addItem(relation_name, relation_id)
+            special_relation[relation_id] = i
+            self.special_relation_names.append(f"special_relation.{relation_name}")
 
         for i, seik_name in enumerate(self._game_data["seikeiken"]):
             seik_id = self._game_data["seikeiken"][seik_name]
@@ -161,7 +163,7 @@ class MaidInfoTab(UiTab):
         self.ui.relation_combo.blockSignals(False)
         self.ui.feeling_combo.blockSignals(False)
         self.ui.additional_relation_combo.blockSignals(False)
-        self.ui.SpecialRelation_combo.blockSignals(False)
+        self.ui.special_relation_combo.blockSignals(False)
         self.ui.current_combo.blockSignals(False)
         self.ui.initial_combo.blockSignals(False)
         self.ui.job_class_combo.blockSignals(False)
@@ -178,8 +180,8 @@ class MaidInfoTab(UiTab):
             self.commit_prop_changes("feeling"))
         self.ui.additional_relation_combo.currentIndexChanged.connect(
             self.commit_prop_changes("additionalRelation"))
-        self.ui.SpecialRelation_combo.currentIndexChanged.connect(
-            self.commit_prop_changes("SpecialRelation"))
+        self.ui.special_relation_combo.currentIndexChanged.connect(
+            self.commit_prop_changes("specialRelation"))
         self.ui.employment_day_box.valueChanged.connect(
             self.commit_prop_changes("employmentDay"))
         self.ui.age_box.valueChanged.connect(
@@ -231,9 +233,17 @@ class MaidInfoTab(UiTab):
         if self.maid_mgr.selected_maid is None:
             return
 
+        #Dictionary<string, object>
         maid = self.maid_mgr.selected_maid
 
         self.ui.personality_combo.setEnabled(not maid["properties"]["mainChara"])
+
+        # 디버깅용
+        for name, element in maid["properties"].items():
+            logger.debug(f"maid.items: {name} , {element}")
+            
+        for name, element in self.properties.items():
+            logger.debug(f"properties.items: {name} , {element}")
 
         for name, element in self.properties.items():
             element.set_value(maid["properties"][name])
@@ -265,8 +275,8 @@ class MaidInfoTab(UiTab):
         for i, relation in enumerate(self.additional_relations_names):
             self.ui.additional_relation_combo.setItemText(i, tr_str(relation))
 
-        for i, relation in enumerate(self.SpecialRelation_names):
-            self.ui.SpecialRelation_combo.setItemText(i, tr_str(relation))
+        for i, relation in enumerate(self.special_relation_names):
+            self.ui.special_relation_combo.setItemText(i, tr_str(relation))
 
         for i, seikeiken in enumerate(self.seikeiken_names):
             self.ui.current_combo.setItemText(i, tr_str(seikeiken))

@@ -322,7 +322,7 @@
               <widget class="QComboBox" name="additional_relation_combo"/>
              </item>
              <item row="4" column="3">
-              <widget class="QComboBox" name="SpecialRelation_combo"/>
+              <widget class="QComboBox" name="special_relation_combo"/>
              </item>
              <item row="2" column="4">
               <widget class="QLabel" name="additional_relation_label">

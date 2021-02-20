@@ -117,6 +117,7 @@ class MaidsList(QObject):
         self.ui.ui_tabs.setEnabled(True)
         self.ui.menuSelected_maid.setEnabled(True)
 
+        #Dictionary<string, object>
         maid = self.core.SelectActiveMaid(n.guid)
 
         if maid is None:
